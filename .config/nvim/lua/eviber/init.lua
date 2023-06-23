@@ -1,3 +1,3 @@
-require('eviber.remap')
-require('eviber.packer')
 require('eviber.set')
+require('eviber.remap')
+require('eviber.lazy')
