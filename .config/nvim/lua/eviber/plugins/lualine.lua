@@ -1,7 +1,8 @@
 return {
 	{
 		'nvim-lualine/lualine.nvim',
-		dependencies = { 'kyazdani42/nvim-web-devicons', lazy = true },
+		event = 'VeryLazy',
+		dependencies = { 'kyazdani42/nvim-web-devicons', '1478zhcy/lualine-copilot' },
 		config = function()
 			require('lualine').setup {
 				sections = {
@@ -20,5 +21,4 @@ return {
 			}
 		end
 	},
-	"1478zhcy/lualine-copilot",
 }

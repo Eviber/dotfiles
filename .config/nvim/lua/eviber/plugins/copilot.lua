@@ -1,5 +1,12 @@
 return {
 	'github/copilot.vim',
+	event = 'VeryLazy',
+	config = function()
+		vim.g.copilot_filetypes = {
+			['markdown'] = 1,
+		}
+		-- vim.g.copilot_assume_mapped = true
+	end,
 }
 -- use {
 -- 	"zbirenbaum/copilot.lua",
