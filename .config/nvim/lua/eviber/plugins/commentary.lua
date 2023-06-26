@@ -1,6 +1,8 @@
 return {
 	'tpope/vim-commentary',
+	cmd = "Commentary",
 	keys = {
-		'gc',
+		{ 'gc', mode = 'n' },
+		{ 'gc', mode = 'v' },
 	},
 }
