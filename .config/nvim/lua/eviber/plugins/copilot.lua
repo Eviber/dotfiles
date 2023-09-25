@@ -5,6 +5,19 @@ return {
 		vim.g.copilot_filetypes = {
 			['markdown'] = 1,
 		}
+
+		-- toggle Copilot
+		vim.api.nvim_create_user_command('CopilotToggle', function()
+			vim.g.copilot_enabled = not vim.g.copilot_enabled
+			if vim.g.copilot_enabled then
+				vim.cmd('Copilot disable')
+			else
+				vim.cmd('Copilot enable')
+			end
+		end, {nargs = 0})
+
+		vim.keymap.set('n', '<leader>c', '<cmd>CopilotToggle<CR>')
+
 		-- vim.g.copilot_assume_mapped = true
 	end,
 }

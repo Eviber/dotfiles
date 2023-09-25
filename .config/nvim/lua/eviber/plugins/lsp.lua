@@ -21,7 +21,9 @@ return {
       -- This is where you modify the settings for lsp-zero
       -- Note: autocompletion settings will not take effect
 
-      require('lsp-zero.settings').preset({})
+      require('lsp-zero.settings').preset({
+        name = 'recommended',
+      })
     end
   },
 
@@ -37,7 +39,14 @@ return {
       -- The arguments for .extend() have the same shape as `manage_nvim_cmp`: 
       -- https://github.com/VonHeikemen/lsp-zero.nvim/blob/v2.x/doc/md/api-reference.md#manage_nvim_cmp
 
-      require('lsp-zero.cmp').extend()
+      require('lsp-zero.cmp').extend({
+        set_sources = 'recommended',
+        set_basic_mappings = true,
+        set_extra_mappings = false,
+        use_luasnip = true,
+        set_format = true,
+        documentation_window = true,
+      })
 
       -- And you can configure cmp even more, if you want to.
       local cmp = require('cmp')
@@ -50,6 +59,7 @@ return {
           ['<C-b>'] = cmp_action.luasnip_jump_backward(),
         }
       })
+	  print("Cmp loaded")
     end
   },
 
@@ -67,6 +77,7 @@ return {
           pcall(function() vim.cmd('MasonUpdate') end)
         end,
       },
+	  {'simrat39/rust-tools.nvim'},
     },
     config = function()
       -- This is where all the LSP shenanigans will live
@@ -77,10 +88,24 @@ return {
         lsp.default_keymaps({buffer = bufnr})
       end)
 
+      lsp.skip_server_setup({'rust_analyzer'})
+
       -- (Optional) Configure lua language server for neovim
       require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
 
       lsp.setup()
+
+      local rust_tools = require('rust-tools')
+
+      rust_tools.setup({
+        server = {
+          on_attach = function(_, bufnr)
+            vim.keymap.set('n', '<leader>vca', rust_tools.code_actions.code_actions_group, {buffer = bufnr})
+            print("Rust tools loaded")
+          end,
+        }
+      })
+      print("Lsp config loaded")
     end
   }
 }

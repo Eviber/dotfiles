@@ -36,6 +36,3 @@ vim.keymap.set('v', '<leader>d', '"_d')
 
 -- start a search and replace on the current word
 vim.keymap.set('n', '<leader>s', ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gc<Left><Left><Left>")
-
--- toggle Copilot
-vim.keymap.set('n', '<leader>c', ":lua vim.api.nvim_set_var('copilot_enabled', not vim.api.nvim_get_var('copilot_enabled'))<CR>")
