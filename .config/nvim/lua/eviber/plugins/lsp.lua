@@ -59,7 +59,6 @@ return {
           ['<C-b>'] = cmp_action.luasnip_jump_backward(),
         }
       })
-	  print("Cmp loaded")
     end
   },
 
@@ -105,7 +104,6 @@ return {
           end,
         }
       })
-      print("Lsp config loaded")
     end
   }
 }
