@@ -17,7 +17,7 @@ return {
 						"encoding",
 					}
 				},
-				options = { theme = 'onedark' }
+				options = { theme = 'ayu' }
 			}
 		end
 	},
