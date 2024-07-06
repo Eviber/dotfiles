@@ -12,7 +12,7 @@
 -- local lsp = require('lsp-zero')
 -- print(vim.inspect(lsp))
 
-return {
+local zero = {
   {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v2.x',
@@ -73,7 +73,7 @@ return {
       {
         'williamboman/mason.nvim',
         build = function()
-          pcall(function() vim.cmd('MasonUpdate') end)
+          -- pcall(function() vim.cmd('MasonUpdate') end)
         end,
       },
 	  {'simrat39/rust-tools.nvim'},
@@ -107,3 +107,5 @@ return {
     end
   }
 }
+
+return {} -- zero

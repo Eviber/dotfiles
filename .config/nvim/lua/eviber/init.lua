@@ -1,3 +1,5 @@
 require('eviber.set')
 require('eviber.remap')
+require('eviber.rulechecker')
 require('eviber.lazy')
+require('eviber.split_tokens')
