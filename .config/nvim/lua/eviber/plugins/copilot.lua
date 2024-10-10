@@ -1,4 +1,4 @@
-return {
+local copilot = {
 	'github/copilot.vim',
 	event = 'VeryLazy',
 	config = function()
@@ -16,11 +16,16 @@ return {
 			end
 		end, {nargs = 0})
 
-		vim.keymap.set('n', '<leader>c', '<cmd>CopilotToggle<CR>')
 
 		-- vim.g.copilot_assume_mapped = true
 	end,
+   keys = {
+		{ '<leader>c', '<cmd>CopilotToggle<CR>', desc = 'Toggle Copilot' },
+   },
 }
+
+return {} -- copilot
+
 -- use {
 -- 	"zbirenbaum/copilot.lua",
 -- 	cmd = "Copilot",

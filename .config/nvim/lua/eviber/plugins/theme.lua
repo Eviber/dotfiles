@@ -1,18 +1,12 @@
 return {
-	'Shatur/neovim-ayu',
-	lazy = false,
-	priority = 1000,
-	config = function()
-		vim.g.background = 'light'
-		vim.cmd('colorscheme ayu')
-	end
+	{
+		"folke/tokyonight.nvim",
+		lazy = false,
+		priority = 1000,
+		config = function ()
+			vim.cmd('colorscheme tokyonight')
+		end
+	},
+	{ 'Shatur/neovim-ayu', lazy = true },
+	{ 'navarasu/onedark.nvim', lazy = true },
 }
-
--- return {
--- 	'navarasu/onedark.nvim',
--- 	lazy = false,
--- 	priority = 1000,
--- 	config = function()
--- 		vim.cmd('colorscheme onedark')
--- 	end
--- }

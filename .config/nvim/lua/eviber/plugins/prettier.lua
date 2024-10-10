@@ -14,12 +14,12 @@ filetypes = {
 }
 
 return {
-	'MunifTanjim/prettier.nvim',
-	config = function()
-		require('prettier').setup({
-			bin = 'prettier',
-			filetypes = filetypes,
-		})
-	end,
-	ft = filetypes,
+	-- 'MunifTanjim/prettier.nvim',
+	-- config = function()
+	-- 	require('prettier').setup({
+	-- 		bin = 'prettier',
+	-- 		filetypes = filetypes,
+	-- 	})
+	-- end,
+	-- ft = filetypes,
 }

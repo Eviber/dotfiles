@@ -3,5 +3,8 @@ return {
 	config = function()
 		require('gitsigns').setup()
 	end,
-	event = 'VeryLazy',
+	event = 'BufEnter *.*',
+	dependencies = {
+		{ "ejrichards/baredot.nvim" },
+	},
 }
