@@ -1,14 +1,9 @@
 return {
 	{
 		'VonHeikemen/lsp-zero.nvim',
-		branch = 'v3.x',
+		branch = 'v4.x',
 		lazy = true,
 		config = false,
-		init = function()
-			-- Disable automatic setup, we are doing it manually
-			vim.g.lsp_zero_extend_cmp = 0
-			vim.g.lsp_zero_extend_lspconfig = 0
-		end,
 	},
 
 	-- Autocompletion
@@ -18,24 +13,30 @@ return {
 		dependencies = {
 			{'L3MON4D3/LuaSnip'},
 		},
+		opts = function(_, opts)
+			opts.sources = opts.sources or {}
+			table.insert(opts.sources, {
+				name = "lazydev",
+				group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+			})
+        end,
 		config = function()
-			-- Here is where you configure the autocompletion settings.
-			local lsp_zero = require('lsp-zero')
-			lsp_zero.extend_cmp()
-
-			-- And you can configure cmp even more, if you want to.
 			local cmp = require('cmp')
-			local cmp_action = lsp_zero.cmp_action()
 
 			cmp.setup({
-				formatting = lsp_zero.cmp_format({details = true}),
+				sources = {
+					{name = 'nvim_lsp'},
+				},
 				mapping = cmp.mapping.preset.insert({
 					['<C-Space>'] = cmp.mapping.complete(),
 					['<C-u>'] = cmp.mapping.scroll_docs(-4),
 					['<C-d>'] = cmp.mapping.scroll_docs(4),
-					['<C-f>'] = cmp_action.luasnip_jump_forward(),
-					['<C-b>'] = cmp_action.luasnip_jump_backward(),
-				})
+				}),
+				snippet = {
+					expand = function(args)
+						vim.snippet.expand(args.body)
+					end,
+				},
 			})
 		end
 	},
@@ -48,59 +49,58 @@ return {
 		dependencies = {
 			{'folke/neodev.nvim'},
 			{'hrsh7th/cmp-nvim-lsp'},
+			{'williamboman/mason.nvim'},
+			{'williamboman/mason-lspconfig.nvim'},
 		},
 		config = function()
 			-- This is where all the LSP shenanigans will live
 			local lsp_zero = require('lsp-zero')
-			lsp_zero.extend_lspconfig()
 
-			lsp_zero.on_attach(function(_, bufnr)
-				-- see :help lsp-zero-keybindings
-				-- to learn the available actions
-				lsp_zero.default_keymaps({buffer = bufnr})
-			end)
+			local lsp_attach = function(_, bufnr)
+				vim.keymap.set("n", "gd",           vim.lsp.buf.definition,       { buffer = bufnr, desc = "Go to definition" })
+				vim.keymap.set("n", "K",            vim.lsp.buf.hover,            { buffer = bufnr, desc = "Hover definition" })
+				vim.keymap.set("n", "<leader>vws",  vim.lsp.buf.workspace_symbol, { buffer = bufnr, desc = "Search symbol in workspace" })
+				vim.keymap.set("n", "<leader>vd",   vim.diagnostic.open_float,    { buffer = bufnr, desc = "Show diagnostic" })
+				vim.keymap.set("n", "]d",           vim.diagnostic.goto_next,     { buffer = bufnr, desc = "Go to next error" })
+				vim.keymap.set("n", "[d",           vim.diagnostic.goto_prev,     { buffer = bufnr, desc = "Go to previous error" })
+				vim.keymap.set("n", "<leader>vca",  vim.lsp.buf.code_action,      { buffer = bufnr, desc = "Open code actions" })
+				vim.keymap.set("n", "<leader>vrr",  vim.lsp.buf.references,       { buffer = bufnr, desc = "Symbol references" })
+				vim.keymap.set("n", "<leader>vrn",  vim.lsp.buf.rename,           { buffer = bufnr, desc = "Rename symbol" })
+				vim.keymap.set("i", "<C-h>",        vim.lsp.buf.signature_help,   { buffer = bufnr, desc = "Signature information" })
+            end
 
-			vim.keymap.set("n", "gd",           vim.lsp.buf.definition, { desc = "Go to definition" })
-			vim.keymap.set("n", "K",            vim.lsp.buf.hover, { desc = "Hover definition" })
-			vim.keymap.set("n", "<leader>vws",  vim.lsp.buf.workspace_symbol, { desc = "Search symbol in workspace" })
-			vim.keymap.set("n", "<leader>vd",   vim.diagnostic.open_float, { desc = "Show diagnostic" })
-			vim.keymap.set("n", "]d",           vim.diagnostic.goto_next, { desc = "Go to next error" })
-			vim.keymap.set("n", "[d",           vim.diagnostic.goto_prev, { desc = "Go to previous error" })
-			vim.keymap.set("n", "<leader>vca",  vim.lsp.buf.code_action, { desc = "Open code actions" })
-			vim.keymap.set("n", "<leader>vrr",  vim.lsp.buf.references, { desc = "Symbol references" })
-			vim.keymap.set("n", "<leader>vrn",  vim.lsp.buf.rename, { desc = "Rename symbol" })
-			vim.keymap.set("i", "<C-h>",        vim.lsp.buf.signature_help)
-
-			-- (Optional) Configure lua language server for neovim
-			-- local lua_opts = lsp_zero.nvim_lua_ls()
-			-- require('lspconfig').lua_ls.setup(lua_opts)
-
-			require('lspconfig').clangd.setup({
-				-- cmd = { "C:\\Users\\FT999180\\.bin\\clangd.exe" },
-				filetypes = { "c", "cpp" },
-				root_dir = require('lspconfig').util.root_pattern(
-					'.clangd',
-					'.clang-tidy',
-					'.clang-format',
-					'compile_commands.json',
-					'compile_flags.txt',
-					'configure.ac',
-					'.git'
-				),
+			lsp_zero.extend_lspconfig({
+				sign_text = true,
+				lsp_attach = lsp_attach,
+				capabilities = require('cmp_nvim_lsp').default_capabilities()
 			})
 
-			require('lspconfig').lua_ls.setup({
-				cmd = { "C:\\Users\\FT999180\\.bin\\lua-language-server-3.7.4-win32-x64\\bin\\lua-language-server.exe" },
-				before_init = require("neodev.lsp").before_init,
+			require('mason').setup()
+			require('mason-lspconfig').setup({
+				ensure_installed = { 'clangd', 'lua_ls', 'rust_analyzer' },
+				handlers = {
+					-- this first function is the "default handler"
+					-- it applies to every language server without a "custom handler"
+					function(server_name)
+						require('lspconfig')[server_name].setup({})
+					end,
+
+
+					rust_analyzer = lsp_zero.noop,
+				}
 			})
+
+			vim.g.rustaceanvim = {
+				server = {
+					capabilities = lsp_zero.get_capabilities()
+				},
+			}
 		end
-	}
-}
+	},
 
--- local cmp_mappings = lsp.defaults.cmp_mappings({
--- 	['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
--- 	['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
--- 	['<Return>'] = cmp_confirm,
--- 	["<Tab>"] = cmp_confirm,
--- 	['<C-Space>'] = cmp.mapping.complete(),
--- })
+	{
+		'mrcjkb/rustaceanvim',
+		version = '^5', -- Recommended
+		lazy = false, -- This plugin is already lazy
+	},
+}
