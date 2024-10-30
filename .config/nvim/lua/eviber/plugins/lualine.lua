@@ -1,7 +1,7 @@
 return {
 	{
 		'nvim-lualine/lualine.nvim',
-		event = 'BufEnter *.*',
+		event = 'VeryLazy',
 		dependencies = { 'nvim-tree/nvim-web-devicons', '1478zhcy/lualine-copilot' },
 		config = function()
 			require('lualine').setup {
