@@ -49,11 +49,6 @@ local function toggle_dark()
 end
 vim.keymap.set('n', '<leader>b', toggle_dark, { desc = "Toggle dark/light theme" })
 
--- vim.api.nvim_create_autocmd("FileType", {
--- 	pattern = "lua",
--- 	command = "setlocal noexpandtab",
--- })
-
 vim.keymap.set('n', '<leader>lw', function() vim.cmd("set wrap!") end, { desc = "Toggle line wrap" })
 
 if vim.g.neovide then
