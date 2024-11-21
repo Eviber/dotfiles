@@ -1,7 +1,7 @@
 return {
 	{
 		"NeogitOrg/neogit",
-        cmd = "Neogit",
+		cmd = "Neogit",
 		keys = {
 			{ "<leader>gs", vim.cmd.Neogit, desc = "Open Neogit status" },
 		},

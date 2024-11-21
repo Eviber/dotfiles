@@ -1,4 +1,4 @@
 return {
-   'will133/vim-dirdiff',
-	cmd = 'DirDiff',
+  'will133/vim-dirdiff',
+  cmd = 'DirDiff',
 }

@@ -1,6 +1,6 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   print("Installing lazy.nvim...")
   vim.fn.system({
     "git",
@@ -17,6 +17,7 @@ vim.opt.rtp:prepend(lazypath)
 local opt = {
 	defaults = {
 		lazy = true, -- should plugins be lazy-loaded?
+		-- version = "*", -- install the latest stable version of plugins that support Semver
 	},
 	checker = {
 		-- automatically check for plugin updates
