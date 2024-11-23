@@ -1,5 +1,6 @@
 return {
 	'stevearc/oil.nvim',
+	version = '*',
 	lazy = false,
 	opts = {
 		skip_confirm_for_simple_edits = true,
