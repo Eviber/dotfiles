@@ -44,6 +44,7 @@ return {
 	-- LSP
 	{
 		'neovim/nvim-lspconfig',
+		version = '*',
 		cmd = 'LspInfo',
 		event = {'BufReadPre', 'BufNewFile'},
 		dependencies = {
