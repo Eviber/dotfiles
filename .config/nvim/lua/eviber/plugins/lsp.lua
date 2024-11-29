@@ -51,7 +51,10 @@ return {
 			{'folke/neodev.nvim'},
 			{'hrsh7th/cmp-nvim-lsp'},
 			{'williamboman/mason.nvim'},
-			{'williamboman/mason-lspconfig.nvim'},
+			{
+				'williamboman/mason-lspconfig.nvim',
+				version = '*',
+			},
 		},
 		config = function()
 			-- This is where all the LSP shenanigans will live
