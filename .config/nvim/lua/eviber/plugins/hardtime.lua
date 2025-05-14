@@ -4,7 +4,7 @@ return {
 	opts = {},
 	event = "VeryLazy",
 	cmd = "Hardtime",
-	config = {
-		vim.keymap.set('n', '<leader>ht', function() vim.cmd("Hardtime toggle") end, { desc = "Toggle Hardtime" })
-	}
+	keys = {
+		{ '<leader>ht', function() vim.cmd("Hardtime toggle") end, desc = "Toggle Hardtime" },
+	},
 }

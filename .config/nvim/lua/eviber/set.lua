@@ -32,6 +32,8 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "121"
 
+vim.cmd[[set completeopt+=menuone,noselect,popup]]
+
 vim.g.mapleader = ' '
 
 vim.opt.mouse = ''
@@ -39,11 +41,16 @@ vim.opt.mouse = ''
 vim.api.nvim_command('filetype plugin on')
 vim.api.nvim_command('filetype indent on')
 
-local signs = { Error = "󰅚 ", Warn = "󰀪 ", Hint = "󰌶 ", Info = " " }
-for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-end
+vim.diagnostic.config({
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = "󰅚 ",
+            [vim.diagnostic.severity.WARN] = "󰀪 ",
+            [vim.diagnostic.severity.INFO] =  " ",
+            [vim.diagnostic.severity.HINT] =  "󰌶 ",
+        }
+    }
+})
 
 -- Highlight on yank
 local autocmd = vim.api.nvim_create_autocmd

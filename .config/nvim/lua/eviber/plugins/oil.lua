@@ -7,7 +7,7 @@ return {
 	},
 	-- Optional dependencies
 	dependencies = { "nvim-tree/nvim-web-devicons" },
-	config = {
-		vim.keymap.set('n', '<leader>pv', vim.cmd.Oil, { desc = "Launch Oil" })
+	keys = {
+		{ '<leader>pv', vim.cmd.Oil, desc = "Launch Oil" },
 	}
 }
