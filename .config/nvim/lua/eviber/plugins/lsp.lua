@@ -49,18 +49,21 @@ return {
 			vim.api.nvim_create_autocmd('LspAttach', {
 				callback = function(event)
 					local bufnr = event.buf
-					local go_to_next_diag = function () vim.diagnostic.jump({count = 1, float = true}) end
-					local go_to_prev_diag = function () vim.diagnostic.jump({count = -1, float = true}) end
+					local function toggle_virtual_lines()
+						if vim.diagnostic.config().virtual_lines ~= true then
+							vim.diagnostic.config({ virtual_lines = true })
+						else
+							vim.diagnostic.config({ virtual_lines = { current_line = true }})
+						end
+					end
 
-					vim.keymap.set("n", "grn",         vim.lsp.buf.rename,           { buffer = bufnr, desc = "Rename symbol" })
-					vim.keymap.set("n", "grr",         vim.lsp.buf.references,       { buffer = bufnr, desc = "Symbol references" })
-					vim.keymap.set("n", "gra",         vim.lsp.buf.code_action,      { buffer = bufnr, desc = "Open code actions" })
-					vim.keymap.set("n", "gd",          vim.lsp.buf.definition,       { buffer = bufnr, desc = "Go to definition" })
-					vim.keymap.set("n", "K",           vim.lsp.buf.hover,            { buffer = bufnr, desc = "Hover definition" })
-					-- vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, { buffer = bufnr, desc = "Search symbol in workspace" })
-					vim.keymap.set("i", "<C-h>",       vim.lsp.buf.signature_help,   { buffer = bufnr, desc = "Signature information" })
-					vim.keymap.set("n", "]d",          go_to_next_diag,              { buffer = bufnr, desc = "Go to next diagnostic" })
-					vim.keymap.set("n", "[d",          go_to_prev_diag,              { buffer = bufnr, desc = "Go to previous diagnostic" })
+					vim.keymap.set("n", "grn",        vim.lsp.buf.rename,         { buffer = bufnr, desc = "Rename symbol" })
+					vim.keymap.set("n", "grr",        vim.lsp.buf.references,     { buffer = bufnr, desc = "Symbol references" })
+					vim.keymap.set("n", "gra",        vim.lsp.buf.code_action,    { buffer = bufnr, desc = "Open code actions" })
+					vim.keymap.set("n", "gd",         vim.lsp.buf.definition,     { buffer = bufnr, desc = "Go to definition" })
+					vim.keymap.set("n", "<leader>K",  vim.cmd.Man,                { buffer = bufnr, desc = "Open Man page" })
+					vim.keymap.set("i", "<C-h>",      vim.lsp.buf.signature_help, { buffer = bufnr, desc = "Signature information" })
+					vim.keymap.set("n", "<leader>vl", toggle_virtual_lines,       { buffer = bufnr, desc = "toggle Virtual Lines diagnostics" })
 
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 					if client == nil then return end

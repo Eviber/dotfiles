@@ -32,11 +32,13 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "121"
 
-vim.cmd[[set completeopt+=menuone,noselect,popup]]
+vim.opt.completeopt = { "menuone", "noselect", "popup", "fuzzy" }
 
 vim.g.mapleader = ' '
 
 vim.opt.mouse = ''
+
+vim.o.winborder = 'rounded'
 
 vim.api.nvim_command('filetype plugin on')
 vim.api.nvim_command('filetype indent on')
