@@ -6,10 +6,15 @@ local copilot = {
 			['markdown'] = 1,
 		}
 
+		local copilot_enabled = false
 		-- toggle Copilot
 		vim.api.nvim_create_user_command('CopilotToggle', function()
-			vim.g.copilot_enabled = not vim.g.copilot_enabled
-			if vim.g.copilot_enabled then
+			if copilot_enabled ~= true then
+				copilot_enabled = true
+			else
+				copilot_enabled = false
+			end
+			if copilot_enabled == true then
 				vim.cmd('Copilot disable')
 			else
 				vim.cmd('Copilot enable')
@@ -18,6 +23,8 @@ local copilot = {
 
 
 		-- vim.g.copilot_assume_mapped = true
+		vim.cmd('Copilot status')
+		vim.cmd('Copilot disable')
 	end,
    -- keys = {
 		-- { '<leader>c', '<cmd>CopilotToggle<CR>', desc = 'Toggle Copilot' },
