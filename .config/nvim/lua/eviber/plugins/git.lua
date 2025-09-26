@@ -17,13 +17,7 @@ return {
 
 			"ejrichards/baredot.nvim",
 		},
-		config = function ()
-			local neogit = require("neogit")
-
-			neogit.setup({
-				graph_style = "kitty",
-			})
-		end,
+		opt = { graph_style = "kitty" },
 	},
 	{
 		'tpope/vim-fugitive',

@@ -24,7 +24,7 @@ local copilot = {
    },
 }
 
-return {} -- copilot
+return copilot
 
 -- use {
 -- 	"zbirenbaum/copilot.lua",
