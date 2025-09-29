@@ -35,6 +35,7 @@ vim.opt.colorcolumn = "121"
 vim.opt.completeopt = { "menuone", "noselect", "popup", "fuzzy" }
 
 vim.g.mapleader = ' '
+vim.g.rustfmt_autosave = 1
 
 vim.opt.mouse = ''
 
