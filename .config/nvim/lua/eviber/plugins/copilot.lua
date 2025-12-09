@@ -19,9 +19,9 @@ local copilot = {
 
 		-- vim.g.copilot_assume_mapped = true
 	end,
-   keys = {
-		{ '<leader>c', '<cmd>CopilotToggle<CR>', desc = 'Toggle Copilot' },
-   },
+   -- keys = {
+		-- { '<leader>c', '<cmd>CopilotToggle<CR>', desc = 'Toggle Copilot' },
+   -- },
 }
 
 return copilot
