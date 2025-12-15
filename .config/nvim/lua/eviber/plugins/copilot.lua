@@ -23,7 +23,7 @@ local copilot = {
 
 
 		-- vim.g.copilot_assume_mapped = true
-		vim.cmd('Copilot status')
+		-- vim.cmd('Copilot status')
 		vim.cmd('Copilot disable')
 	end,
    -- keys = {
