@@ -17,7 +17,9 @@ return {
 
 			"ejrichards/baredot.nvim",
 		},
-		opt = { graph_style = "kitty" },
+		config = function()
+			require("neogit").setup({ graph_style = "kitty" })
+		end,
 	},
 	{
 		'tpope/vim-fugitive',
