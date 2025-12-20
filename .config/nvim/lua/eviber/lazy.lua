@@ -16,7 +16,7 @@ vim.opt.rtp:prepend(lazypath)
 
 local opt = {
 	defaults = {
-		lazy = true, -- should plugins be lazy-loaded?
+		lazy = false, -- should plugins be lazy-loaded?
 		-- version = "*", -- install the latest stable version of plugins that support Semver
 	},
 	checker = {
