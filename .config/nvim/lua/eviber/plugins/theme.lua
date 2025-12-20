@@ -8,6 +8,4 @@ return {
 			vim.cmd('colorscheme tokyonight')
 		end
 	},
-	{ 'Shatur/neovim-ayu', lazy = true },
-	{ 'navarasu/onedark.nvim', lazy = true },
 }
