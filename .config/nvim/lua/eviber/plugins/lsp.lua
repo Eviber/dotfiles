@@ -4,6 +4,17 @@ return {
 		version = '*',
 		cmd = 'LspInfo',
 		event = {'BufReadPre', 'BufNewFile'},
+		dependencies = {
+			{
+				'saghen/blink.cmp',
+				-- dependencies = { 'rafamadriz/friendly-snippets' },
+				version = '1.*',
+
+				---@module 'blink.cmp'
+				---@type blink.cmp.Config
+				opts = {},
+			}
+		},
 		config = function()
 			vim.api.nvim_create_autocmd('LspAttach', {
 				callback = function(event)
@@ -51,11 +62,11 @@ return {
 					vim.keymap.set("n", "<leader>vl", toggle_virtual_line,        { buffer = bufnr, desc = "toggle Virtual Line diagnostics" })
 					vim.keymap.set("n", "<leader>vt", toggle_virtual_text,        { buffer = bufnr, desc = "toggle Virtual Text diagnostics" })
 
-					local client = vim.lsp.get_client_by_id(event.data.client_id)
-					if client == nil then return end
-					if client:supports_method('textDocument/completion') then
-						vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
-					end
+					-- local client = vim.lsp.get_client_by_id(event.data.client_id)
+					-- if client == nil then return end
+					-- if client:supports_method('textDocument/completion') then
+					-- 	vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
+					-- end
 
 				end,
 			})
