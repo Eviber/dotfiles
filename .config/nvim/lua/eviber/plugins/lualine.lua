@@ -17,7 +17,7 @@ return {
 						"encoding",
 					}
 				},
-				options = { theme = 'tokyonight' }
+				options = { theme = 'auto' }
 			}
 		end
 	},
