@@ -10,7 +10,7 @@ vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 
-vim.opt.expandtab = true
+vim.opt.expandtab = false
 vim.opt.smartindent = true
 
 vim.opt.wrap = false
@@ -60,7 +60,7 @@ local augroup = vim.api.nvim_create_augroup
 
 autocmd("TextYankPost", {
   callback = function()
-    vim.highlight.on_yank({higroup='Visual'})
+    vim.hl.on_yank({higroup='Visual'})
   end,
   desc = "Briefly highlight yanked text",
   group = augroup("yank", { clear = true }),
