@@ -105,6 +105,14 @@ Pack {
 	end,
 }
 
+vim.lsp.config.kconfig = {
+    root_markers = { '.git', 'Kconfig' },
+    cmd = { 'kconfig-lsp' },
+    filetypes = { 'kconfig' },
+}
+
+vim.lsp.enable('kconfig')
+
 -- }}}
 
 -- TODO Comments {{{
