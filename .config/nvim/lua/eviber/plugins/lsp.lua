@@ -1,9 +1,13 @@
+vim.lsp.enable('clangd')
+vim.lsp.enable('lua_ls')
+
 return {
 	{
 		'neovim/nvim-lspconfig',
+		lazy=false,
 		version = '*',
 		cmd = 'LspInfo',
-		event = {'BufReadPre', 'BufNewFile'},
+		-- event = {'BufReadPre', 'BufNewFile'},
 		dependencies = {
 			{
 				'saghen/blink.cmp',
