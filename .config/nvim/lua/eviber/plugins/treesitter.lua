@@ -24,7 +24,7 @@ end
 
 return {
 	'nvim-treesitter/nvim-treesitter',
-	version = '*',
+	branch = 'master',
 	build = ':TSUpdate',
 	config = config,
 	event = 'VeryLazy',
