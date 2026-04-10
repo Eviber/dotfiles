@@ -316,7 +316,7 @@ Pack { "lewis6991/gitsigns.nvim", version = "*", opts = {
 
 -- Cord {{{
 
-Pack { "vyfor/cord.nvim", build = "Cord update" }
+-- Pack { "vyfor/cord.nvim", build = "Cord update" }
 
 -- }}}
 
