@@ -6,7 +6,7 @@ require("diagnostic_settings")
 -- Helper functions {{{
 
 ---Helper to call vim.pack.add()
----@param spec { [1]?: string, src?: string, version?: string }
+---@param spec { [1]?: string, src?: string, version?: string, opts?: table }
 function AddPack(spec)
 	local src = spec.src or spec[1]
 	assert(src, "AddPack: table must have a 'src' key or a positional string at [1]")
@@ -16,6 +16,11 @@ function AddPack(spec)
 	local pack = { src = src }
 	pack.version = spec.version and vim.version.range(spec.version) or nil
 	vim.pack.add({ pack })
+	if spec.opts then
+		local name = src:match("/([^/]+)$")
+		name = name and name:gsub("%.git$", ""):gsub("%.n?vim$", "")
+		require(name).setup(spec.opts)
+	end
 end
 
 ---Helper to set normal mode keymaps
@@ -52,11 +57,9 @@ vim.cmd("colorscheme tokyonight")
 
 -- Oil (file explorer) {{{
 
-AddPack { "stevearc/oil.nvim", version = "*" }
 AddPack { "nvim-tree/nvim-web-devicons" }
--- AddPack { "nvim-mini/mini.icons.git" }
--- require("mini.icons").setup()
-require("oil").setup({ skip_confirm_for_simple_edits = true })
+-- AddPack { "nvim-mini/mini.icons.git", opts = {} }
+AddPack { "stevearc/oil.nvim", version = "*", opts = { skip_confirm_for_simple_edits = true } }
 nmap("<leader>pv", vim.cmd.Oil, "Open Oil")
 
 -- }}}
@@ -73,9 +76,8 @@ vim.g.copilot_enabled = false
 
 -- lualine {{{
 
-AddPack { "nvim-lualine/lualine.nvim" }
 AddPack { "1478zhcy/lualine-copilot" }
-require("lualine").setup {
+AddPack { "nvim-lualine/lualine.nvim", opts = {
 	sections = {
 		lualine_x = {
 			"copilot",
@@ -85,7 +87,7 @@ require("lualine").setup {
 		}
 	},
 	options = { theme = "auto" }
-}
+} }
 
 -- }}}
 
@@ -110,8 +112,7 @@ nmap("<leader>u", vim.cmd.Undotree, "Toggle undo-tree")
 -- })
 
 AddPack { "rafamadriz/friendly-snippets" }
-AddPack { "saghen/blink.cmp", version = "1.*" }
-require("blink.cmp").setup()
+AddPack { "saghen/blink.cmp", version = "1.*", opts = {} }
 
 -- }}}
 
@@ -119,8 +120,7 @@ require("blink.cmp").setup()
 
 AddPack { "neovim/nvim-lspconfig" }
 
-AddPack { "folke/lazydev.nvim" }
-require("lazydev").setup({ library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } })
+AddPack { "folke/lazydev.nvim", opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } } }
 vim.lsp.enable("lua_ls")
 
 AddPack { "mrcjkb/rustaceanvim", version = "^8" }
@@ -131,15 +131,13 @@ vim.lsp.enable("rust-analyzer")
 -- TODO Comments {{{
 
 AddPack { "nvim-lua/plenary.nvim" }
-AddPack { "folke/todo-comments.nvim" }
-require("todo-comments").setup()
+AddPack { "folke/todo-comments.nvim", opts = {} }
 
 -- }}}
 
 -- Trouble {{{
 
-AddPack { "folke/trouble.nvim" } -- Depends on "nvim-tree/nvim-web-devicons"
-require("trouble").setup()
+AddPack { "folke/trouble.nvim", opts = {} } -- Depends on "nvim-tree/nvim-web-devicons"
 
 nmap("<leader>xx", "<cmd>Trouble diagnostics toggle<cr>",                        "Diagnostics (Trouble)")
 nmap("<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",           "Buffer Diagnostics (Trouble)")
@@ -152,10 +150,9 @@ nmap("<leader>xQ", "<cmd>Trouble qflist toggle<cr>",                            
 
 -- Which key {{{
 
-AddPack { "folke/which-key.nvim", version = "*" }
+AddPack { "folke/which-key.nvim", version = "*", opts = {} }
 vim.o.timeout = true
 vim.o.timeoutlen = 1000
-require("which-key").setup()
 
 -- }}}
 
@@ -168,8 +165,7 @@ require("which-key").setup()
 -- "nvim-telescope/telescope-fzf-native.nvim",
 -- build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build"
 
-AddPack { "nvim-telescope/telescope.nvim", version = "0.2.x" }
-require("telescope").setup {}
+AddPack { "nvim-telescope/telescope.nvim", version = "0.2.x", opts = {} }
 
 AddPack { "davvid/telescope-git-grep.nvim" }
 require("telescope").load_extension("git_grep")
@@ -212,8 +208,7 @@ AddPack { "nvchad/showkeys" }
 
 AddPack { "sindrets/diffview.nvim" }
 
-AddPack { "https://plugins.ejri.dev/baredot.nvim" }
-require("baredot").setup { git_dir = "~/.dotfiles" }
+AddPack { "https://plugins.ejri.dev/baredot.nvim", opts = { git_dir = "~/.dotfiles" } }
 
 -- Dependencies:
 -- "nvim-lua/plenary.nvim",         -- required
@@ -226,14 +221,12 @@ require("baredot").setup { git_dir = "~/.dotfiles" }
 
 -- "ejrichards/baredot.nvim",
 
-AddPack { "NeogitOrg/neogit", version = "*" }
-require("neogit").setup({ graph_style = "kitty" })
+AddPack { "NeogitOrg/neogit", version = "*", opts = { graph_style = "kitty" } }
 nmap("<leader>gs", vim.cmd.Neogit, "Open Neogit status")
 
 AddPack { "tpope/vim-fugitive" }
 
-AddPack { "lewis6991/gitsigns.nvim", version = "*" }
-require("gitsigns").setup {
+AddPack { "lewis6991/gitsigns.nvim", version = "*", opts = {
 	signcolumn = false,
 	numhl = true,
 	on_attach = function(bufnr)
@@ -302,7 +295,7 @@ require("gitsigns").setup {
 		-- Text object
 		-- map({"o", "x"}, "ih", gitsigns.select_hunk, { desc = "Select Git Hunk (gitsigns)" })
 	end
-}
+} }
 
 -- }}}
 
@@ -312,8 +305,7 @@ require("gitsigns").setup {
 
 -- dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
 
--- AddPack { "m4xshen/hardtime.nvim" }
--- require("hardtime").setup()
+-- AddPack { "m4xshen/hardtime.nvim", opts = {} }
 -- nmap("<leader>ht", function() vim.cmd("Hardtime toggle") end, "Toggle Hardtime")
 
 -- }}}
@@ -327,8 +319,7 @@ AddPack { "vyfor/cord.nvim" }
 
 -- Crates {{{
 
-AddPack { "saecki/crates.nvim", version = "stable" }
-require("crates").setup{
+AddPack { "saecki/crates.nvim", version = "stable", opts = {
 	lsp = {
 		enabled = true,
 		-- on_attach = function(client, bufnr)
@@ -339,14 +330,13 @@ require("crates").setup{
 		completion = true,
 		hover = true,
 	},
-}
+}}
 
 -- }}}
 
 -- Guess indent {{{
 
-AddPack { "NMAC427/guess-indent.nvim" }
-require("guess-indent").setup {}
+AddPack { "NMAC427/guess-indent.nvim", opts = {} }
 
 -- }}}
 
