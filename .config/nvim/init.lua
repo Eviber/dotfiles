@@ -6,14 +6,15 @@ require("diagnostic_settings")
 -- Helper functions {{{
 
 ---Helper to call vim.pack.add()
----@param src string
----@param version string|nil
-function AddPack(src, version)
+---@param spec { [1]?: string, src?: string, version?: string }
+function AddPack(spec)
+	local src = spec.src or spec[1]
+	assert(src, "AddPack: table must have a 'src' key or a positional string at [1]")
 	if not src:match("^https?://") then
 		src = "https://github.com/" .. src
 	end
 	local pack = { src = src }
-	pack.version = version and vim.version.range(version) or nil
+	pack.version = spec.version and vim.version.range(spec.version) or nil
 	vim.pack.add({ pack })
 end
 
@@ -44,16 +45,16 @@ end
 
 -- Theme {{{
 
-AddPack("folke/tokyonight.nvim", "*")
+AddPack { "folke/tokyonight.nvim", "*" }
 vim.cmd("colorscheme tokyonight")
 
 -- }}}
 
 -- Oil (file explorer) {{{
 
-AddPack("stevearc/oil.nvim", "*")
-AddPack("nvim-tree/nvim-web-devicons")
--- AddPack("nvim-mini/mini.icons.git")
+AddPack { "stevearc/oil.nvim", "*" }
+AddPack { "nvim-tree/nvim-web-devicons" }
+-- AddPack { "nvim-mini/mini.icons.git" }
 -- require("mini.icons").setup()
 require("oil").setup({ skip_confirm_for_simple_edits = true })
 nmap("<leader>pv", vim.cmd.Oil, "Open Oil")
@@ -62,7 +63,7 @@ nmap("<leader>pv", vim.cmd.Oil, "Open Oil")
 
 -- Copilot {{{
 
-AddPack("github/copilot.vim")
+AddPack { "github/copilot.vim" }
 vim.g.copilot_filetypes = {
 	["markdown"] = 1,
 }
@@ -72,8 +73,8 @@ vim.g.copilot_enabled = false
 
 -- lualine {{{
 
-AddPack("nvim-lualine/lualine.nvim")
-AddPack("1478zhcy/lualine-copilot")
+AddPack { "nvim-lualine/lualine.nvim" }
+AddPack { "1478zhcy/lualine-copilot" }
 require("lualine").setup {
 	sections = {
 		lualine_x = {
@@ -108,36 +109,36 @@ nmap("<leader>u", vim.cmd.Undotree, "Toggle undo-tree")
 -- 	end,
 -- })
 
-AddPack("rafamadriz/friendly-snippets")
-AddPack("saghen/blink.cmp", "1.*")
+AddPack { "rafamadriz/friendly-snippets" }
+AddPack { "saghen/blink.cmp", "1.*" }
 require("blink.cmp").setup()
 
 -- }}}
 
 -- LSP {{{
 
-AddPack("neovim/nvim-lspconfig")
+AddPack { "neovim/nvim-lspconfig" }
 
-AddPack("folke/lazydev.nvim")
+AddPack { "folke/lazydev.nvim" }
 require("lazydev").setup({ library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } })
 vim.lsp.enable("lua_ls")
 
-AddPack("mrcjkb/rustaceanvim", "^8")
+AddPack { "mrcjkb/rustaceanvim", "^8" }
 vim.lsp.enable("rust-analyzer")
 
 -- }}}
 
 -- TODO Comments {{{
 
-AddPack("nvim-lua/plenary.nvim")
-AddPack("folke/todo-comments.nvim")
+AddPack { "nvim-lua/plenary.nvim" }
+AddPack { "folke/todo-comments.nvim" }
 require("todo-comments").setup()
 
 -- }}}
 
 -- Trouble {{{
 
-AddPack("folke/trouble.nvim") -- Depends on "nvim-tree/nvim-web-devicons"
+AddPack { "folke/trouble.nvim" } -- Depends on "nvim-tree/nvim-web-devicons"
 require("trouble").setup()
 
 nmap("<leader>xx", "<cmd>Trouble diagnostics toggle<cr>",                        "Diagnostics (Trouble)")
@@ -151,7 +152,7 @@ nmap("<leader>xQ", "<cmd>Trouble qflist toggle<cr>",                            
 
 -- Which key {{{
 
-AddPack("folke/which-key.nvim", "*")
+AddPack { "folke/which-key.nvim", "*" }
 vim.o.timeout = true
 vim.o.timeoutlen = 1000
 require("which-key").setup()
@@ -167,10 +168,10 @@ require("which-key").setup()
 -- "nvim-telescope/telescope-fzf-native.nvim",
 -- build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build"
 
-AddPack("nvim-telescope/telescope.nvim", "0.2.x")
+AddPack { "nvim-telescope/telescope.nvim", "0.2.x" }
 require("telescope").setup {}
 
-AddPack("davvid/telescope-git-grep.nvim")
+AddPack { "davvid/telescope-git-grep.nvim" }
 require("telescope").load_extension("git_grep")
 
 local function search_cfg()
@@ -203,15 +204,15 @@ nmap("<leader>sn",  search_cfg,                                   "Search Neovim
 
 -- Showkeys {{{
 
-AddPack("nvchad/showkeys")
+AddPack { "nvchad/showkeys" }
 
 -- }}}
 
 -- Git Plugins {{{
 
-AddPack("sindrets/diffview.nvim")
+AddPack { "sindrets/diffview.nvim" }
 
-AddPack("https://plugins.ejri.dev/baredot.nvim")
+AddPack { "https://plugins.ejri.dev/baredot.nvim" }
 require("baredot").setup { git_dir = "~/.dotfiles" }
 
 -- Dependencies:
@@ -225,13 +226,13 @@ require("baredot").setup { git_dir = "~/.dotfiles" }
 
 -- "ejrichards/baredot.nvim",
 
-AddPack("NeogitOrg/neogit", "*")
+AddPack { "NeogitOrg/neogit", "*" }
 require("neogit").setup({ graph_style = "kitty" })
 nmap("<leader>gs", vim.cmd.Neogit, "Open Neogit status")
 
-AddPack("tpope/vim-fugitive")
+AddPack { "tpope/vim-fugitive" }
 
-AddPack("lewis6991/gitsigns.nvim", "*")
+AddPack { "lewis6991/gitsigns.nvim", "*" }
 require("gitsigns").setup {
 	signcolumn = false,
 	numhl = true,
@@ -307,11 +308,11 @@ require("gitsigns").setup {
 
 -- HardTime (disabled) {{{
 
--- AddPack("MunifTanjim/nui.nvim")
+-- AddPack { "MunifTanjim/nui.nvim" }
 
 -- dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
 
--- AddPack("m4xshen/hardtime.nvim")
+-- AddPack { "m4xshen/hardtime.nvim" }
 -- require("hardtime").setup()
 -- nmap("<leader>ht", function() vim.cmd("Hardtime toggle") end, "Toggle Hardtime")
 
@@ -320,13 +321,13 @@ require("gitsigns").setup {
 -- Cord {{{
 
 build("cord.nvim", function() vim.cmd.Cord("update") end)
-AddPack("vyfor/cord.nvim")
+AddPack { "vyfor/cord.nvim" }
 
 -- }}}
 
 -- Crates {{{
 
-AddPack("saecki/crates.nvim", "stable")
+AddPack { "saecki/crates.nvim", "stable" }
 require("crates").setup{
 	lsp = {
 		enabled = true,
@@ -344,7 +345,7 @@ require("crates").setup{
 
 -- Guess indent {{{
 
-AddPack("NMAC427/guess-indent.nvim")
+AddPack { "NMAC427/guess-indent.nvim" }
 require("guess-indent").setup {}
 
 -- }}}
@@ -355,7 +356,7 @@ require("guess-indent").setup {}
 -- "nvim-lua/plenary.nvim",
 -- "nvim-treesitter/nvim-treesitter",
 
-AddPack("tris203/hawtkeys.nvim")
+AddPack { "tris203/hawtkeys.nvim" }
 
 -- }}}
 
@@ -363,11 +364,11 @@ AddPack("tris203/hawtkeys.nvim")
 
 build("nvim-treesitter", vim.cmd.TSUpdate)
 
-AddPack("nvim-treesitter/nvim-treesitter")
+AddPack { "nvim-treesitter/nvim-treesitter" }
 
 require("nvim-treesitter").install { "rust", "c", "lua", "javascript" }
 
-AddPack("nvim-treesitter/nvim-treesitter-context")
+AddPack { "nvim-treesitter/nvim-treesitter-context" }
 
 -- }}}
 
