@@ -45,14 +45,14 @@ end
 
 -- Theme {{{
 
-AddPack { "folke/tokyonight.nvim", "*" }
+AddPack { "folke/tokyonight.nvim", version = "*" }
 vim.cmd("colorscheme tokyonight")
 
 -- }}}
 
 -- Oil (file explorer) {{{
 
-AddPack { "stevearc/oil.nvim", "*" }
+AddPack { "stevearc/oil.nvim", version = "*" }
 AddPack { "nvim-tree/nvim-web-devicons" }
 -- AddPack { "nvim-mini/mini.icons.git" }
 -- require("mini.icons").setup()
@@ -110,7 +110,7 @@ nmap("<leader>u", vim.cmd.Undotree, "Toggle undo-tree")
 -- })
 
 AddPack { "rafamadriz/friendly-snippets" }
-AddPack { "saghen/blink.cmp", "1.*" }
+AddPack { "saghen/blink.cmp", version = "1.*" }
 require("blink.cmp").setup()
 
 -- }}}
@@ -123,7 +123,7 @@ AddPack { "folke/lazydev.nvim" }
 require("lazydev").setup({ library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } })
 vim.lsp.enable("lua_ls")
 
-AddPack { "mrcjkb/rustaceanvim", "^8" }
+AddPack { "mrcjkb/rustaceanvim", version = "^8" }
 vim.lsp.enable("rust-analyzer")
 
 -- }}}
@@ -152,7 +152,7 @@ nmap("<leader>xQ", "<cmd>Trouble qflist toggle<cr>",                            
 
 -- Which key {{{
 
-AddPack { "folke/which-key.nvim", "*" }
+AddPack { "folke/which-key.nvim", version = "*" }
 vim.o.timeout = true
 vim.o.timeoutlen = 1000
 require("which-key").setup()
@@ -168,7 +168,7 @@ require("which-key").setup()
 -- "nvim-telescope/telescope-fzf-native.nvim",
 -- build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build"
 
-AddPack { "nvim-telescope/telescope.nvim", "0.2.x" }
+AddPack { "nvim-telescope/telescope.nvim", version = "0.2.x" }
 require("telescope").setup {}
 
 AddPack { "davvid/telescope-git-grep.nvim" }
@@ -226,13 +226,13 @@ require("baredot").setup { git_dir = "~/.dotfiles" }
 
 -- "ejrichards/baredot.nvim",
 
-AddPack { "NeogitOrg/neogit", "*" }
+AddPack { "NeogitOrg/neogit", version = "*" }
 require("neogit").setup({ graph_style = "kitty" })
 nmap("<leader>gs", vim.cmd.Neogit, "Open Neogit status")
 
 AddPack { "tpope/vim-fugitive" }
 
-AddPack { "lewis6991/gitsigns.nvim", "*" }
+AddPack { "lewis6991/gitsigns.nvim", version = "*" }
 require("gitsigns").setup {
 	signcolumn = false,
 	numhl = true,
@@ -327,7 +327,7 @@ AddPack { "vyfor/cord.nvim" }
 
 -- Crates {{{
 
-AddPack { "saecki/crates.nvim", "stable" }
+AddPack { "saecki/crates.nvim", version = "stable" }
 require("crates").setup{
 	lsp = {
 		enabled = true,
