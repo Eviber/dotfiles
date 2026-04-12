@@ -5,6 +5,18 @@ require("diagnostic_settings")
 
 -- Helper functions {{{
 
+---Helper to convert a string|function into a function via vim.cmd if needed
+---@param callback function|string
+---@return function
+local function ensure_callback(callback)
+	if type(callback) == "function" then
+		return callback
+	elseif type(callback) == "string" then
+		return function() vim.cmd(callback) end
+	end
+	error("Invalid callback type: " .. type(callback))
+end
+
 ---@class AddPackKeymap
 ---@field [1] string Mode
 ---@field [2] string Keymap
@@ -18,12 +30,8 @@ local function set_keymaps(keymaps)
 	for _, km in ipairs(keymaps) do
 		local mode = km[1]
 		local keymap = km[2]
-		local callback = km[3]
+		local callback = ensure_callback(km[3])
 		local desc = km[4]
-		if type(callback) == "string" then
-			local command = callback
-			callback = function() vim.cmd(command) end
-		end
 		vim.keymap.set(mode, keymap, callback, { desc = desc })
 	end
 end
