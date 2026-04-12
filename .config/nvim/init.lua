@@ -5,12 +5,36 @@ require("diagnostic_settings")
 
 -- Helper functions {{{
 
+---@class AddPackKeymap
+---@field [1] string Mode
+---@field [2] string Keymap
+---@field [3] function|string Command
+---@field [4]? string Description
+
+---Helper to set multiple keymaps
+---@param keymaps AddPackKeymap[]?
+local function set_keymaps(keymaps)
+	if not keymaps then return end
+	for _, km in ipairs(keymaps) do
+		local mode = km[1]
+		local keymap = km[2]
+		local callback = km[3]
+		local desc = km[4]
+		if type(callback) == "string" then
+			local command = callback
+			callback = function() vim.cmd(command) end
+		end
+		vim.keymap.set(mode, keymap, callback, { desc = desc })
+	end
+end
+
 ---@class AddPackSpec
----@field [1]? string -- Positional source (e.g., "user/repo" or full URL)
----@field src? string -- Explicit source (e.g., "user/repo" or full URL)
----@field version? string -- Version specifier (e.g., "1.*", "^2.0", "latest")
----@field opts? table -- If provided, passed to the plugin's setup function
----@field config? function -- Optional function to run after adding the plugin
+---@field [1]? string Positional source (e.g., "user/repo" or full URL)
+---@field src? string Explicit source (e.g., "user/repo" or full URL)
+---@field version? string Version specifier (e.g., "1.*", "^2.0", "latest")
+---@field opts? table If provided, passed to the plugin's setup function
+---@field config? function Function to run after adding the plugin
+---@field keys? AddPackKeymap[] List of keymaps to set after adding the plugin
 
 ---Helper to call vim.pack.add()
 ---@param spec AddPackSpec
@@ -29,14 +53,7 @@ function AddPack(spec)
 		require(name).setup(spec.opts)
 	end
 	if spec.config then spec.config() end
-end
-
----Helper to set normal mode keymaps
----@param keymap string
----@param callback string|function
----@param desc string
-local function nmap(keymap, callback, desc)
-	vim.keymap.set("n", keymap, callback, { desc = desc })
+	set_keymaps(spec.keys)
 end
 
 ---Helper to set autocommand on plugin update
@@ -72,8 +89,12 @@ AddPack {
 
 AddPack { "nvim-tree/nvim-web-devicons" }
 -- AddPack { "nvim-mini/mini.icons.git", opts = {} }
-AddPack { "stevearc/oil.nvim", version = "*", opts = { skip_confirm_for_simple_edits = true } }
-nmap("<leader>pv", vim.cmd.Oil, "Open Oil")
+AddPack {
+	"stevearc/oil.nvim",
+	version = "*",
+	opts = { skip_confirm_for_simple_edits = true },
+	keys = { { "n", "<leader>pv", vim.cmd.Oil, "Open Oil" } },
+}
 
 -- }}}
 
@@ -107,7 +128,7 @@ AddPack { "nvim-lualine/lualine.nvim", opts = {
 -- undo-tree {{{
 
 vim.cmd.packadd("nvim.undotree")
-nmap("<leader>u", vim.cmd.Undotree, "Toggle undo-tree")
+vim.keymap.set("n", "<leader>u", vim.cmd.Undotree, { desc = "Toggle undo tree" })
 
 -- }}}
 
@@ -164,14 +185,19 @@ AddPack { "folke/todo-comments.nvim", opts = {} }
 
 -- Trouble {{{
 
-AddPack { "folke/trouble.nvim", opts = {} } -- Depends on "nvim-tree/nvim-web-devicons"
-
-nmap("<leader>xx", "<cmd>Trouble diagnostics toggle<cr>",                        "Diagnostics (Trouble)")
-nmap("<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",           "Buffer Diagnostics (Trouble)")
-nmap("<leader>cs", "<cmd>Trouble symbols toggle focus=true<cr>",                 "Symbols (Trouble)")
-nmap("<leader>cl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", "LSP Definitions / references / ... (Trouble)")
-nmap("<leader>xL", "<cmd>Trouble loclist toggle<cr>",                            "Location List (Trouble)")
-nmap("<leader>xQ", "<cmd>Trouble qflist toggle<cr>",                             "Quickfix List (Trouble)")
+-- Depends on "nvim-tree/nvim-web-devicons"
+AddPack {
+	"folke/trouble.nvim",
+	opts = {},
+	keys = {
+		{ "n", "<leader>xx", "Trouble diagnostics toggle",                        "Diagnostics (Trouble)" },
+		{ "n", "<leader>xX", "Trouble diagnostics toggle filter.buf=0",           "Buffer Diagnostics (Trouble)" },
+		{ "n", "<leader>cs", "Trouble symbols toggle focus=true",                 "Symbols (Trouble)" },
+		{ "n", "<leader>cl", "Trouble lsp toggle focus=false win.position=right", "LSP Definitions / references / ... (Trouble)" },
+		{ "n", "<leader>xL", "Trouble loclist toggle",                            "Location List (Trouble)" },
+		{ "n", "<leader>xQ", "Trouble qflist toggle",                             "Quickfix List (Trouble)" },
+	},
+}
 
 -- }}}
 
@@ -192,7 +218,28 @@ vim.o.timeoutlen = 1000
 -- "nvim-telescope/telescope-fzf-native.nvim",
 -- build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build"
 
-AddPack { "nvim-telescope/telescope.nvim", version = "0.2.x", opts = {} }
+local function callback(module, fname)
+	return function() require(module)[fname]() end
+end
+
+local function search_cfg()
+	require("telescope.builtin").find_files { cwd = vim.fn.stdpath "config" }
+end
+
+AddPack {
+	"nvim-telescope/telescope.nvim",
+	version = "0.2.x",
+	opts = {},
+	keys = {
+		{ "n", "<leader>sf",  callback("telescope.builtin", "find_files"),  "Search files" },
+		{ "n", "<leader>sw",  callback("telescope.builtin", "grep_string"), "Search word" },
+		{ "n", "<leader>sl",  callback("telescope.builtin", "live_grep"),   "Live search" },
+		{ "n", "<leader>sgf", callback("telescope.builtin", "git_files"),   "Search git files" },
+		{ "n", "<leader>sgw", callback("git_grep", "grep"),                 "Search word in git files" },
+		{ "n", "<leader>sgl", callback("git_grep", "live_grep"),            "Live search in git files" },
+		{ "n", "<leader>sn",  search_cfg,                                   "Search Neovim files" },
+	},
+}
 
 AddPack {
 	"davvid/telescope-git-grep.nvim",
@@ -200,10 +247,6 @@ AddPack {
 		require("telescope").load_extension("git_grep")
 	end,
 }
-
-local function search_cfg()
-	require("telescope.builtin").find_files { cwd = vim.fn.stdpath "config" }
-end
 
 vim.api.nvim_create_autocmd("User", {
 	pattern = "TelescopePreviewerLoaded",
@@ -214,18 +257,6 @@ vim.api.nvim_create_autocmd("User", {
 		end
 	end,
 })
-
-local function callback(module, fname)
-	return function() require(module)[fname]() end
-end
-
-nmap("<leader>sf",  callback("telescope.builtin", "find_files"),  "Search files")
-nmap("<leader>sw",  callback("telescope.builtin", "grep_string"), "Search word")
-nmap("<leader>sl",  callback("telescope.builtin", "live_grep"),   "Live search")
-nmap("<leader>sgf", callback("telescope.builtin", "git_files"),   "Search git files")
-nmap("<leader>sgw", callback("git_grep", "grep"),                 "Search word in git files")
-nmap("<leader>sgl", callback("git_grep", "live_grep"),            "Live search in git files")
-nmap("<leader>sn",  search_cfg,                                   "Search Neovim files")
 
 -- }}}
 
@@ -252,8 +283,12 @@ AddPack { "https://plugins.ejri.dev/baredot.nvim", opts = { git_dir = "~/.dotfil
 
 -- "ejrichards/baredot.nvim",
 
-AddPack { "NeogitOrg/neogit", version = "*", opts = { graph_style = "kitty" } }
-nmap("<leader>gs", vim.cmd.Neogit, "Open Neogit status")
+AddPack {
+	"NeogitOrg/neogit",
+	version = "*",
+	opts = { graph_style = "kitty" },
+	keys = { { "n", "<leader>gs", vim.cmd.Neogit, "Open Neogit status" } },
+}
 
 AddPack { "tpope/vim-fugitive" }
 
@@ -336,8 +371,7 @@ AddPack { "lewis6991/gitsigns.nvim", version = "*", opts = {
 
 -- dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
 
--- AddPack { "m4xshen/hardtime.nvim", opts = {} }
--- nmap("<leader>ht", function() vim.cmd("Hardtime toggle") end, "Toggle Hardtime")
+-- AddPack { "m4xshen/hardtime.nvim", opts = {}, keys = { { "n", "<leader>ht", "Hardtime toggle", "Toggle Hardtime" } } }
 
 -- }}}
 
