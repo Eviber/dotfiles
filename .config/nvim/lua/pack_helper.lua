@@ -10,14 +10,14 @@ local function ensure_callback(callback)
 	error("Invalid callback type: " .. type(callback))
 end
 
----@class AddPackKeymap
+---@class PackKeymap
 ---@field [1] string Mode
 ---@field [2] string Keymap
 ---@field [3] function|string Command
 ---@field [4]? string Description
 
 ---Helper to set multiple keymaps
----@param keymaps AddPackKeymap[]?
+---@param keymaps PackKeymap[]?
 local function set_keymaps(keymaps)
 	if not keymaps then return end
 	for _, km in ipairs(keymaps) do
@@ -42,20 +42,20 @@ local function build(plugin, build_callback)
 	})
 end
 
----@class AddPackSpec
+---@class PackSpec
 ---@field [1]? string Positional source (e.g., "user/repo" or full URL)
 ---@field src? string Explicit source (e.g., "user/repo" or full URL)
 ---@field version? string Version specifier (e.g., "1.*", "^2.0", "latest")
 ---@field opts? table If provided, passed to the plugin's setup function
 ---@field after? function Function to run after adding the plugin
----@field keys? AddPackKeymap[] List of keymaps to set after adding the plugin
+---@field keys? PackKeymap[] List of keymaps to set after adding the plugin
 ---@field build? function|string Callback to run after updating the plugin
 
 ---Helper to call vim.pack.add()
----@param spec AddPackSpec
-function AddPack(spec)
+---@param spec PackSpec
+function Pack(spec)
 	local src = spec.src or spec[1]
-	assert(src, "AddPack: table must have a 'src' key or a positional string at [1]")
+	assert(src, "Pack: table must have a 'src' key or a positional string at [1]")
 	if not src:match("^https?://") then
 		src = "https://github.com/" .. src
 	end

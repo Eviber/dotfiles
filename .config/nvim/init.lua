@@ -7,7 +7,7 @@ require("diagnostic_settings")
 
 -- Theme {{{
 
-AddPack {
+Pack {
 	"folke/tokyonight.nvim",
 	version = "*",
 	after = function()
@@ -19,9 +19,9 @@ AddPack {
 
 -- Oil (file explorer) {{{
 
-AddPack { "nvim-tree/nvim-web-devicons" }
--- AddPack { "nvim-mini/mini.icons.git", opts = {} }
-AddPack {
+Pack { "nvim-tree/nvim-web-devicons" }
+-- Pack { "nvim-mini/mini.icons.git", opts = {} }
+Pack {
 	"stevearc/oil.nvim",
 	version = "*",
 	opts = { skip_confirm_for_simple_edits = true },
@@ -32,7 +32,7 @@ AddPack {
 
 -- Copilot {{{
 
-AddPack { "github/copilot.vim" }
+Pack { "github/copilot.vim" }
 vim.g.copilot_filetypes = {
 	["markdown"] = 1,
 }
@@ -42,8 +42,8 @@ vim.g.copilot_enabled = false
 
 -- lualine {{{
 
-AddPack { "1478zhcy/lualine-copilot" }
-AddPack { "nvim-lualine/lualine.nvim", opts = {
+Pack { "1478zhcy/lualine-copilot" }
+Pack { "nvim-lualine/lualine.nvim", opts = {
 	sections = {
 		lualine_x = {
 			"copilot",
@@ -77,16 +77,16 @@ vim.keymap.set("n", "<leader>u", vim.cmd.Undotree, { desc = "Toggle undo tree" }
 -- 	end,
 -- })
 
-AddPack { "rafamadriz/friendly-snippets" }
-AddPack { "saghen/blink.cmp", version = "1.*", opts = {} }
+Pack { "rafamadriz/friendly-snippets" }
+Pack { "saghen/blink.cmp", version = "1.*", opts = {} }
 
 -- }}}
 
 -- LSP {{{
 
-AddPack { "neovim/nvim-lspconfig" }
+Pack { "neovim/nvim-lspconfig" }
 
-AddPack {
+Pack {
 	"folke/lazydev.nvim",
 	opts = {
 		library = {
@@ -98,7 +98,7 @@ AddPack {
 	end,
 }
 
-AddPack {
+Pack {
 	"mrcjkb/rustaceanvim",
 	version = "^8",
 	after = function()
@@ -110,15 +110,15 @@ AddPack {
 
 -- TODO Comments {{{
 
-AddPack { "nvim-lua/plenary.nvim" }
-AddPack { "folke/todo-comments.nvim", opts = {} }
+Pack { "nvim-lua/plenary.nvim" }
+Pack { "folke/todo-comments.nvim", opts = {} }
 
 -- }}}
 
 -- Trouble {{{
 
 -- Depends on "nvim-tree/nvim-web-devicons"
-AddPack {
+Pack {
 	"folke/trouble.nvim",
 	opts = {},
 	keys = {
@@ -135,7 +135,7 @@ AddPack {
 
 -- Which key {{{
 
-AddPack { "folke/which-key.nvim", version = "*", opts = {} }
+Pack { "folke/which-key.nvim", version = "*", opts = {} }
 vim.o.timeout = true
 vim.o.timeoutlen = 1000
 
@@ -158,7 +158,7 @@ local function search_cfg()
 	require("telescope.builtin").find_files { cwd = vim.fn.stdpath "config" }
 end
 
-AddPack {
+Pack {
 	"nvim-telescope/telescope.nvim",
 	version = "0.2.x",
 	opts = {},
@@ -173,7 +173,7 @@ AddPack {
 	},
 }
 
-AddPack {
+Pack {
 	"davvid/telescope-git-grep.nvim",
 	after = function()
 		require("telescope").load_extension("git_grep")
@@ -194,15 +194,15 @@ vim.api.nvim_create_autocmd("User", {
 
 -- Showkeys {{{
 
-AddPack { "nvchad/showkeys" }
+Pack { "nvchad/showkeys" }
 
 -- }}}
 
 -- Git Plugins {{{
 
-AddPack { "sindrets/diffview.nvim" }
+Pack { "sindrets/diffview.nvim" }
 
-AddPack { "https://plugins.ejri.dev/baredot.nvim", opts = { git_dir = "~/.dotfiles" } }
+Pack { "https://plugins.ejri.dev/baredot.nvim", opts = { git_dir = "~/.dotfiles" } }
 
 -- Dependencies:
 -- "nvim-lua/plenary.nvim",         -- required
@@ -215,16 +215,16 @@ AddPack { "https://plugins.ejri.dev/baredot.nvim", opts = { git_dir = "~/.dotfil
 
 -- "ejrichards/baredot.nvim",
 
-AddPack {
+Pack {
 	"NeogitOrg/neogit",
 	version = "*",
 	opts = { graph_style = "kitty" },
 	keys = { { "n", "<leader>gs", vim.cmd.Neogit, "Open Neogit status" } },
 }
 
-AddPack { "tpope/vim-fugitive" }
+Pack { "tpope/vim-fugitive" }
 
-AddPack { "lewis6991/gitsigns.nvim", version = "*", opts = {
+Pack { "lewis6991/gitsigns.nvim", version = "*", opts = {
 	signcolumn = false,
 	numhl = true,
 	on_attach = function(bufnr)
@@ -299,23 +299,23 @@ AddPack { "lewis6991/gitsigns.nvim", version = "*", opts = {
 
 -- HardTime (disabled) {{{
 
--- AddPack { "MunifTanjim/nui.nvim" }
+-- Pack { "MunifTanjim/nui.nvim" }
 
 -- dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
 
--- AddPack { "m4xshen/hardtime.nvim", opts = {}, keys = { { "n", "<leader>ht", "Hardtime toggle", "Toggle Hardtime" } } }
+-- Pack { "m4xshen/hardtime.nvim", opts = {}, keys = { { "n", "<leader>ht", "Hardtime toggle", "Toggle Hardtime" } } }
 
 -- }}}
 
 -- Cord {{{
 
-AddPack { "vyfor/cord.nvim", build = "Cord update" }
+Pack { "vyfor/cord.nvim", build = "Cord update" }
 
 -- }}}
 
 -- Crates {{{
 
-AddPack { "saecki/crates.nvim", version = "stable", opts = {
+Pack { "saecki/crates.nvim", version = "stable", opts = {
 	lsp = {
 		enabled = true,
 		-- on_attach = function(client, bufnr)
@@ -332,7 +332,7 @@ AddPack { "saecki/crates.nvim", version = "stable", opts = {
 
 -- Guess indent {{{
 
-AddPack { "NMAC427/guess-indent.nvim", opts = {} }
+Pack { "NMAC427/guess-indent.nvim", opts = {} }
 
 -- }}}
 
@@ -342,13 +342,13 @@ AddPack { "NMAC427/guess-indent.nvim", opts = {} }
 -- "nvim-lua/plenary.nvim",
 -- "nvim-treesitter/nvim-treesitter",
 
-AddPack { "tris203/hawtkeys.nvim" }
+Pack { "tris203/hawtkeys.nvim" }
 
 -- }}}
 
 -- Treesitter {{{
 
-AddPack {
+Pack {
 	"nvim-treesitter/nvim-treesitter",
 	after = function()
 		require("nvim-treesitter").install { "rust", "c", "lua", "javascript" }
@@ -356,7 +356,7 @@ AddPack {
 	build = vim.cmd.TSUpdate,
 }
 
-AddPack { "nvim-treesitter/nvim-treesitter-context" }
+Pack { "nvim-treesitter/nvim-treesitter-context" }
 
 -- }}}
 
