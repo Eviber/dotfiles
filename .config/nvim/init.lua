@@ -36,34 +36,6 @@ local function set_keymaps(keymaps)
 	end
 end
 
----@class AddPackSpec
----@field [1]? string Positional source (e.g., "user/repo" or full URL)
----@field src? string Explicit source (e.g., "user/repo" or full URL)
----@field version? string Version specifier (e.g., "1.*", "^2.0", "latest")
----@field opts? table If provided, passed to the plugin's setup function
----@field config? function Function to run after adding the plugin
----@field keys? AddPackKeymap[] List of keymaps to set after adding the plugin
-
----Helper to call vim.pack.add()
----@param spec AddPackSpec
-function AddPack(spec)
-	local src = spec.src or spec[1]
-	assert(src, "AddPack: table must have a 'src' key or a positional string at [1]")
-	if not src:match("^https?://") then
-		src = "https://github.com/" .. src
-	end
-	local pack = { src = src }
-	pack.version = spec.version and vim.version.range(spec.version) or nil
-	vim.pack.add({ pack })
-	if spec.opts then
-		local name = src:match("/([^/]+)$")
-		name = name and name:gsub("%.git$", ""):gsub("%.n?vim$", "")
-		require(name).setup(spec.opts)
-	end
-	if spec.config then spec.config() end
-	set_keymaps(spec.keys)
-end
-
 ---Helper to set autocommand on plugin update
 ---@param plugin string
 ---@param build_callback function
@@ -77,6 +49,39 @@ local function build(plugin, build_callback)
 			end
 		end
 	})
+end
+
+---@class AddPackSpec
+---@field [1]? string Positional source (e.g., "user/repo" or full URL)
+---@field src? string Explicit source (e.g., "user/repo" or full URL)
+---@field version? string Version specifier (e.g., "1.*", "^2.0", "latest")
+---@field opts? table If provided, passed to the plugin's setup function
+---@field config? function Function to run after adding the plugin
+---@field keys? AddPackKeymap[] List of keymaps to set after adding the plugin
+---@field build? function|string Callback to run after updating the plugin
+
+---Helper to call vim.pack.add()
+---@param spec AddPackSpec
+function AddPack(spec)
+	local src = spec.src or spec[1]
+	assert(src, "AddPack: table must have a 'src' key or a positional string at [1]")
+	if not src:match("^https?://") then
+		src = "https://github.com/" .. src
+	end
+	if spec.build then
+		local plugin_name = src:gsub(".*/([^/]+)$", "%1"):gsub("%.git$", "")
+		build(plugin_name, ensure_callback(spec.build))
+	end
+	local pack = { src = src }
+	pack.version = spec.version and vim.version.range(spec.version) or nil
+	vim.pack.add({ pack })
+	if spec.opts then
+		local name = src:match("/([^/]+)$")
+		name = name and name:gsub("%.git$", ""):gsub("%.n?vim$", "")
+		require(name).setup(spec.opts)
+	end
+	if spec.config then spec.config() end
+	set_keymaps(spec.keys)
 end
 
 -- }}}
@@ -385,8 +390,7 @@ AddPack { "lewis6991/gitsigns.nvim", version = "*", opts = {
 
 -- Cord {{{
 
-build("cord.nvim", function() vim.cmd.Cord("update") end)
-AddPack { "vyfor/cord.nvim" }
+AddPack { "vyfor/cord.nvim", build = "Cord update" }
 
 -- }}}
 
@@ -425,13 +429,12 @@ AddPack { "tris203/hawtkeys.nvim" }
 
 -- Treesitter {{{
 
-build("nvim-treesitter", vim.cmd.TSUpdate)
-
 AddPack {
 	"nvim-treesitter/nvim-treesitter",
 	config = function()
 		require("nvim-treesitter").install { "rust", "c", "lua", "javascript" }
 	end,
+	build = vim.cmd.TSUpdate,
 }
 
 AddPack { "nvim-treesitter/nvim-treesitter-context" }
