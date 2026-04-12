@@ -5,8 +5,15 @@ require("diagnostic_settings")
 
 -- Helper functions {{{
 
+---@class AddPackSpec
+---@field [1]? string -- Positional source (e.g., "user/repo" or full URL)
+---@field src? string -- Explicit source (e.g., "user/repo" or full URL)
+---@field version? string -- Version specifier (e.g., "1.*", "^2.0", "latest")
+---@field opts? table -- If provided, passed to the plugin's setup function
+---@field config? function -- Optional function to run after adding the plugin
+
 ---Helper to call vim.pack.add()
----@param spec { [1]?: string, src?: string, version?: string, opts?: table, config?: function }
+---@param spec AddPackSpec
 function AddPack(spec)
 	local src = spec.src or spec[1]
 	assert(src, "AddPack: table must have a 'src' key or a positional string at [1]")
