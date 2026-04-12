@@ -6,7 +6,7 @@ require("diagnostic_settings")
 -- Helper functions {{{
 
 ---Helper to call vim.pack.add()
----@param spec { [1]?: string, src?: string, version?: string, opts?: table }
+---@param spec { [1]?: string, src?: string, version?: string, opts?: table, config?: function }
 function AddPack(spec)
 	local src = spec.src or spec[1]
 	assert(src, "AddPack: table must have a 'src' key or a positional string at [1]")
@@ -21,6 +21,7 @@ function AddPack(spec)
 		name = name and name:gsub("%.git$", ""):gsub("%.n?vim$", "")
 		require(name).setup(spec.opts)
 	end
+	if spec.config then spec.config() end
 end
 
 ---Helper to set normal mode keymaps
@@ -50,8 +51,13 @@ end
 
 -- Theme {{{
 
-AddPack { "folke/tokyonight.nvim", version = "*" }
-vim.cmd("colorscheme tokyonight")
+AddPack {
+	"folke/tokyonight.nvim",
+	version = "*",
+	config = function()
+		vim.cmd("colorscheme tokyonight")
+	end,
+}
 
 -- }}}
 
@@ -120,11 +126,25 @@ AddPack { "saghen/blink.cmp", version = "1.*", opts = {} }
 
 AddPack { "neovim/nvim-lspconfig" }
 
-AddPack { "folke/lazydev.nvim", opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } } }
-vim.lsp.enable("lua_ls")
+AddPack {
+	"folke/lazydev.nvim",
+	opts = {
+		library = {
+			{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+		},
+	},
+	config = function()
+		vim.lsp.enable("lua_ls")
+	end,
+}
 
-AddPack { "mrcjkb/rustaceanvim", version = "^8" }
-vim.lsp.enable("rust-analyzer")
+AddPack {
+	"mrcjkb/rustaceanvim",
+	version = "^8",
+	config = function()
+		vim.lsp.enable("rust-analyzer")
+	end,
+}
 
 -- }}}
 
@@ -167,8 +187,12 @@ vim.o.timeoutlen = 1000
 
 AddPack { "nvim-telescope/telescope.nvim", version = "0.2.x", opts = {} }
 
-AddPack { "davvid/telescope-git-grep.nvim" }
-require("telescope").load_extension("git_grep")
+AddPack {
+	"davvid/telescope-git-grep.nvim",
+	config = function()
+		require("telescope").load_extension("git_grep")
+	end,
+}
 
 local function search_cfg()
 	require("telescope.builtin").find_files { cwd = vim.fn.stdpath "config" }
@@ -354,9 +378,12 @@ AddPack { "tris203/hawtkeys.nvim" }
 
 build("nvim-treesitter", vim.cmd.TSUpdate)
 
-AddPack { "nvim-treesitter/nvim-treesitter" }
-
-require("nvim-treesitter").install { "rust", "c", "lua", "javascript" }
+AddPack {
+	"nvim-treesitter/nvim-treesitter",
+	config = function()
+		require("nvim-treesitter").install { "rust", "c", "lua", "javascript" }
+	end,
+}
 
 AddPack { "nvim-treesitter/nvim-treesitter-context" }
 
