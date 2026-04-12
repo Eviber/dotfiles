@@ -1,97 +1,16 @@
+require("pack_helper")
+
 require("set")
 require("lsp")
 require("remap")
 require("diagnostic_settings")
-
--- Helper functions {{{
-
----Helper to convert a string|function into a function via vim.cmd if needed
----@param callback function|string
----@return function
-local function ensure_callback(callback)
-	if type(callback) == "function" then
-		return callback
-	elseif type(callback) == "string" then
-		return function() vim.cmd(callback) end
-	end
-	error("Invalid callback type: " .. type(callback))
-end
-
----@class AddPackKeymap
----@field [1] string Mode
----@field [2] string Keymap
----@field [3] function|string Command
----@field [4]? string Description
-
----Helper to set multiple keymaps
----@param keymaps AddPackKeymap[]?
-local function set_keymaps(keymaps)
-	if not keymaps then return end
-	for _, km in ipairs(keymaps) do
-		local mode = km[1]
-		local keymap = km[2]
-		local callback = ensure_callback(km[3])
-		local desc = km[4]
-		vim.keymap.set(mode, keymap, callback, { desc = desc })
-	end
-end
-
----Helper to set autocommand on plugin update
----@param plugin string
----@param build_callback function
-local function build(plugin, build_callback)
-	vim.api.nvim_create_autocmd("PackChanged", {
-		callback = function(ev)
-			local name, kind = ev.data.spec.name, ev.data.kind
-			if name == plugin and kind == "update" then
-				if not ev.data.active then vim.cmd.packadd(plugin) end
-				build_callback()
-			end
-		end
-	})
-end
-
----@class AddPackSpec
----@field [1]? string Positional source (e.g., "user/repo" or full URL)
----@field src? string Explicit source (e.g., "user/repo" or full URL)
----@field version? string Version specifier (e.g., "1.*", "^2.0", "latest")
----@field opts? table If provided, passed to the plugin's setup function
----@field config? function Function to run after adding the plugin
----@field keys? AddPackKeymap[] List of keymaps to set after adding the plugin
----@field build? function|string Callback to run after updating the plugin
-
----Helper to call vim.pack.add()
----@param spec AddPackSpec
-function AddPack(spec)
-	local src = spec.src or spec[1]
-	assert(src, "AddPack: table must have a 'src' key or a positional string at [1]")
-	if not src:match("^https?://") then
-		src = "https://github.com/" .. src
-	end
-	if spec.build then
-		local plugin_name = src:gsub(".*/([^/]+)$", "%1"):gsub("%.git$", "")
-		build(plugin_name, ensure_callback(spec.build))
-	end
-	local pack = { src = src }
-	pack.version = spec.version and vim.version.range(spec.version) or nil
-	vim.pack.add({ pack })
-	if spec.opts then
-		local name = src:match("/([^/]+)$")
-		name = name and name:gsub("%.git$", ""):gsub("%.n?vim$", "")
-		require(name).setup(spec.opts)
-	end
-	if spec.config then spec.config() end
-	set_keymaps(spec.keys)
-end
-
--- }}}
 
 -- Theme {{{
 
 AddPack {
 	"folke/tokyonight.nvim",
 	version = "*",
-	config = function()
+	after = function()
 		vim.cmd("colorscheme tokyonight")
 	end,
 }
@@ -174,7 +93,7 @@ AddPack {
 			{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
 		},
 	},
-	config = function()
+	after = function()
 		vim.lsp.enable("lua_ls")
 	end,
 }
@@ -182,7 +101,7 @@ AddPack {
 AddPack {
 	"mrcjkb/rustaceanvim",
 	version = "^8",
-	config = function()
+	after = function()
 		vim.lsp.enable("rust-analyzer")
 	end,
 }
@@ -256,7 +175,7 @@ AddPack {
 
 AddPack {
 	"davvid/telescope-git-grep.nvim",
-	config = function()
+	after = function()
 		require("telescope").load_extension("git_grep")
 	end,
 }
@@ -431,7 +350,7 @@ AddPack { "tris203/hawtkeys.nvim" }
 
 AddPack {
 	"nvim-treesitter/nvim-treesitter",
-	config = function()
+	after = function()
 		require("nvim-treesitter").install { "rust", "c", "lua", "javascript" }
 	end,
 	build = vim.cmd.TSUpdate,
