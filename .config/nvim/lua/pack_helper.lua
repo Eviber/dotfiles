@@ -42,6 +42,12 @@ local function build(plugin, build_callback)
 	})
 end
 
+---@type vim.pack.Spec[]
+local plugins = {}
+
+---@type function[]
+local after_plugins = {}
+
 ---@class PackSpec
 ---@field [1]? string Positional source (e.g., "user/repo" or full URL)
 ---@field src? string Explicit source (e.g., "user/repo" or full URL)
@@ -63,11 +69,21 @@ function Pack(spec)
 	build(name, spec.build)
 	local pack = { src = src }
 	pack.version = spec.version and vim.version.range(spec.version) or nil
-	vim.pack.add({ pack })
-	if spec.opts then
-		local module_name = name:gsub("%.n?vim$", "")
-		require(module_name).setup(spec.opts)
+	table.insert(plugins, pack)
+	table.insert(after_plugins, function()
+		if spec.opts then
+			local module_name = name:gsub("%.n?vim$", "")
+			require(module_name).setup(spec.opts)
+		end
+		if spec.after then spec.after() end
+		set_keymaps(spec.keys)
+	end)
+end
+
+---Call after all Pack() calls to add plugins and run after callbacks
+function PackLoad()
+	vim.pack.add(plugins, { confirm = false })
+	for _, after in ipairs(after_plugins) do
+		after()
 	end
-	if spec.after then spec.after() end
-	set_keymaps(spec.keys)
 end

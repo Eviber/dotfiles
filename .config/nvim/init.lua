@@ -360,4 +360,6 @@ Pack { "nvim-treesitter/nvim-treesitter-context" }
 
 -- }}}
 
+PackLoad()
+
 -- vim:foldmethod=marker
