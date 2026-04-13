@@ -86,4 +86,6 @@ function PackLoad()
 	for _, after in ipairs(after_plugins) do
 		after()
 	end
+	plugins = {}
+	after_plugins = {}
 end
