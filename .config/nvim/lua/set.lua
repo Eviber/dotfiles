@@ -64,3 +64,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Briefly highlight yanked text",
 	group = vim.api.nvim_create_augroup("yank", { clear = true }),
 })
+
+-- Enable the new and fancy ✨ ui2 ✨
+require('vim._core.ui2').enable({enable = true})
