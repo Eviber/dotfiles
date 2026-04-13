@@ -1,7 +1,6 @@
 require("pack_helper")
 
 require("set")
-require("lsp")
 require("remap")
 require("diagnostic_settings")
 
