@@ -29,16 +29,6 @@ Pack {
 
 -- }}}
 
--- Copilot {{{
-
-Pack { "github/copilot.vim" }
-vim.g.copilot_filetypes = {
-	["markdown"] = 1,
-}
-vim.g.copilot_enabled = false
-
--- }}}
-
 -- lualine {{{
 
 Pack { "1478zhcy/lualine-copilot" }
